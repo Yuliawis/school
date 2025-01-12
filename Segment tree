@@ -1,0 +1,52 @@
+struct SegmentTree{
+    int n;
+    vector<int> tree;
+
+    SegmentTree(int _n){
+        n = 1;
+        while(_n > n) n*=2;
+        tree.resize(2 * n);
+    }
+
+    int query(int v, int tl, int tr, int l, int r){
+        if (l <= tl && tr <= r){
+            return tree[v];
+        }
+
+        if (l >= tr || tl >= r){
+            return 0;
+        }
+
+        int tm = (tr + tl) / 2;
+
+        int val1 = query(2 * v, tl, tm, l, r);
+        int val2 = query(2 * v + 1, tm, tr, l, r);
+
+        return val1 + val2;
+    }
+
+    void upd(int v, int tl, int tr, int ind){
+        if (tl + 1 == tr){
+            tree[v] += 1;
+            return;
+        }
+
+        int tm = (tr + tl) / 2;
+
+        if (ind < tm){
+            upd(2 * v, tl, tm, ind);
+        }
+        else{
+            upd(2 *v + 1, tm, tr, ind);
+        }
+        tree[v] = tree[2*v] + tree[2*v+1];
+    }
+
+    int query(int l, int r){
+        return query(1, 0, n, l, r);
+    }
+
+    void upd(int x){
+        upd (1, 0, n, x);
+    }
+};
